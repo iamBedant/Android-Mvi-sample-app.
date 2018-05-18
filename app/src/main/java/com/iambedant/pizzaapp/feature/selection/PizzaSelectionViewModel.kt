@@ -84,32 +84,12 @@ class PizzaSelectionViewModel(private val pizzaActionProcessorHolder: PizzaActio
 
                 }
                 is PizzaSelectionResult.SelectPizzaVariationResult -> when (result) {
+
                     is PizzaSelectionResult.SelectPizzaVariationResult.Success -> {
-                        val groups = mutableListOf<SelectableVariationGroupItems>()
-                        for (group in previousState.groups) {
-                            val list = mutableListOf<SelectableVariations>()
-                            if (result.selectedVariation.groupId == group.groupId) {
-                                for (variation in group.variations) {
-                                    if (result.selectedVariation.variationId == variation.variationsItem.id) {
-                                        list.add(SelectableVariations(variationsItem = variation.variationsItem,
-                                                isSelected = true,
-                                                isExcluded = false))
-                                    } else {
-                                        list.add(SelectableVariations(variationsItem = variation.variationsItem,
-                                                isSelected = false,
-                                                isExcluded = false))
-                                    }
-                                }
-                            } else {
-                                for (variation in group.variations) {
-                                    list.add(SelectableVariations(variationsItem = variation.variationsItem,
-                                            isSelected = true,
-                                            isExcluded = false))
-                                }
-                            }
-                            groups.add(SelectableVariationGroupItems(groupId = group.groupId, variations = list, name = group.name))
-                        }
-                        previousState.copy(groups = groups)
+                        //TODO: update viewstate to restore state during configuration changes.
+                        //This depends on requirement
+
+                        previousState.copy()
                     }
 
                     is PizzaSelectionResult.SelectPizzaVariationResult.Failure -> {

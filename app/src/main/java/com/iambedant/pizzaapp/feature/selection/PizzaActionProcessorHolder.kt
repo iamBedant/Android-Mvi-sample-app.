@@ -13,30 +13,30 @@ import javax.inject.Inject
 class PizzaActionProcessorHolder @Inject constructor(private val repository: PizzaRepository) {
 
 
-    fun transformerFromAction(): ObservableTransformer<PizzaSelectionAction, PizzaSelectionResult.LoadPizaVariationsResult> {
+    fun transformerFromAction(): ObservableTransformer<PizzaSelectionAction, PizzaSelectionResult> {
         return ObservableTransformer { action ->
             action.publish { shared ->
-//                Observable.merge(
-                        shared.ofType(PizzaSelectionAction.LoadPizzaAction::class.java).compose(loadPizza())
-//                        shared.ofType(PizzaSelectionAction.SelectVariation::class.java).compose(selectedItem())
-//                )
+                Observable.merge(
+                        shared.ofType(PizzaSelectionAction.LoadPizzaAction::class.java).compose(loadPizza()),
+                        shared.ofType(PizzaSelectionAction.SelectVariation::class.java).compose(selectedItem())
+                )
             }
         }
     }
 
-//    private fun selectedItem(): ObservableTransformer<PizzaSelectionAction.SelectVariation, PizzaSelectionResult.SelectPizzaVariationResult> {
-//        return ObservableTransformer { action ->
-//            action.flatMap {
-//                repository.loadPizza()
-//                        .map { }
-//                        .cast(PizzaSelectionResult.SelectPizzaVariationResult::class.java)
-//                        .onErrorReturn { t -> PizzaSelectionResult.SelectPizzaVariationResult.Failure(t) }
-//                        .subscribeOn(Schedulers.io())
-//                        .observeOn(AndroidSchedulers.mainThread())
-//                        .startWith(PizzaSelectionResult.SelectPizzaVariationResult.InFlight)
-//            }
-//        }
-//    }
+    private fun selectedItem(): ObservableTransformer<PizzaSelectionAction.SelectVariation, PizzaSelectionResult.SelectPizzaVariationResult> {
+        return ObservableTransformer { action ->
+            action.flatMap {
+                Observable.just(it.selectionGroup)
+                        .map { selectedItem -> PizzaSelectionResult.SelectPizzaVariationResult.Success(selectedItem) }
+                        .cast(PizzaSelectionResult.SelectPizzaVariationResult::class.java)
+                        .onErrorReturn { t -> PizzaSelectionResult.SelectPizzaVariationResult.Failure(t) }
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .startWith(PizzaSelectionResult.SelectPizzaVariationResult.InFlight)
+            }
+        }
+    }
 
 
     private fun loadPizza(): ObservableTransformer<PizzaSelectionAction.LoadPizzaAction, PizzaSelectionResult.LoadPizaVariationsResult> {
@@ -61,8 +61,8 @@ class PizzaActionProcessorHolder @Inject constructor(private val repository: Piz
          * creating a hashmap for excluded items
          */
         val excludeMap: HashMap<String, String> = hashMapOf()
-        for (i in pizza.variants.excludeList){
-            for (j in i){
+        for (i in pizza.variants.excludeList) {
+            for (j in i) {
                 excludeMap[j.groupId] = j.variationId
             }
         }
@@ -72,7 +72,7 @@ class PizzaActionProcessorHolder @Inject constructor(private val repository: Piz
             val variationList = mutableListOf<SelectableVariations>()
             for (items in groups.variations) {
                 var isExcluded = false
-                if(excludeMap[groups.groupId]==items.id){
+                if (excludeMap[groups.groupId] == items.id) {
                     isExcluded = true
                 }
                 if (items.default == 1) {

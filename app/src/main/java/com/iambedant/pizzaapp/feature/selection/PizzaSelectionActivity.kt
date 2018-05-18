@@ -77,15 +77,15 @@ class PizzaSelectionActivity : DaggerAppCompatActivity(), MviView<PizzaSelection
                 if (items.isSelected && !items.isExcluded) {
                     radioGroup.check(radioButton.id)
                 }
-                if(items.isExcluded){
+                if (items.isExcluded) {
                     radioButton.isEnabled = false
                 }
-//                setOnCheckedChangeListener { _, isChecked ->
-//                    if (isChecked) {
-//                        selectGroupVariationsIntent.onNext(PizzaSelectionIntent.SelectGroupVariationsIntent(SelectVariation(
-//                                groupId = group.groupId, variationId = items.variationsItem.id)))
-//                    }
-//                }
+                setOnCheckedChangeListener { _, isChecked ->
+                    if (isChecked) {
+                        selectGroupVariationsIntent.onNext(PizzaSelectionIntent.SelectGroupVariationsIntent(SelectVariation(
+                                groupId = group.groupId, variationId = items.variationsItem.id)))
+                    }
+                }
             }
 
         }
