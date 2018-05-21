@@ -129,3 +129,12 @@ Here is a sample Api response.
   }
 }
 ```
+
+### ToDo
+Figure out a way to solve state re-rendering on each view state problem. If you have a good solution, please submit a PR.
+
+* https://www.reddit.com/r/androiddev/comments/7mb3r1/dealing_with_redundant_state_rendering_when_using/
+ 
+
+
+
